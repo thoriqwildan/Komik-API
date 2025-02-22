@@ -1,15 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
+import { AuthResponseDto } from './dto/auth-response.dto';
 import { PrismaService } from 'src/config/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/domain/user';
 import { AuthRegisterDto } from './dto/auth-register.dto';
-import { RegisterResponseDto } from './dto/register-response.dto';
 import { User as Userdb } from '@prisma/client';
 import { AuthUpdateDto } from './dto/auth-update.dto';
-import { UpdateResponseDto } from './dto/update-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +16,7 @@ export class AuthService {
     private prismaService: PrismaService,
   ) {}
 
-  async validateLogin(loginDto: AuthLoginDto): Promise<LoginResponseDto> {
+  async validateLogin(loginDto: AuthLoginDto): Promise<AuthResponseDto> {
     const user = await this.prismaService.user.findFirst({
       where: { username: loginDto.username },
     });
@@ -60,7 +58,7 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: AuthRegisterDto): Promise<RegisterResponseDto> {
+  async register(registerDto: AuthRegisterDto): Promise<AuthResponseDto> {
     const sameUsername = await this.prismaService.user.count({
       where: { username: registerDto.username },
     });
@@ -112,7 +110,7 @@ export class AuthService {
   async update(
     username: string,
     updateDto: AuthUpdateDto,
-  ): Promise<UpdateResponseDto> {
+  ): Promise<AuthResponseDto> {
     const user = await this.prismaService.user.findFirst({
       where: { username: username },
     });

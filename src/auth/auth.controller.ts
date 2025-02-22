@@ -10,15 +10,13 @@ import {
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
 import { WebResponseDto } from 'src/config/dto/web-response.dto';
 import { AuthRegisterDto } from './dto/auth-register.dto';
-import { RegisterResponseDto } from './dto/register-response.dto';
 import { Request } from 'express';
 import { User } from 'src/user/domain/user';
 import { JwtRoleGuard } from 'src/config/guards/jwtrole.guard';
 import { AuthUpdateDto } from './dto/auth-update.dto';
-import { UpdateResponseDto } from './dto/update-response.dto';
+import { AuthResponseDto } from './dto/auth-response.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -30,11 +28,11 @@ export class AuthController {
 
   @Post('login')
   @ApiOkResponse({
-    type: LoginResponseDto,
+    type: AuthResponseDto,
   })
   async login(
     @Body() loginDto: AuthLoginDto,
-  ): Promise<WebResponseDto<LoginResponseDto>> {
+  ): Promise<WebResponseDto<AuthResponseDto>> {
     const result = await this.authService.validateLogin(loginDto);
 
     return {
@@ -46,11 +44,11 @@ export class AuthController {
 
   @Post('register')
   @ApiOkResponse({
-    type: RegisterResponseDto,
+    type: AuthResponseDto,
   })
   async register(
     @Body() registerDto: AuthRegisterDto,
-  ): Promise<WebResponseDto<RegisterResponseDto>> {
+  ): Promise<WebResponseDto<AuthResponseDto>> {
     const result = await this.authService.register(registerDto);
 
     return {
@@ -67,7 +65,6 @@ export class AuthController {
     type: User,
   })
   async me(@Req() request: Request): Promise<WebResponseDto<User>> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return {
       status: 'success',
       message: 'Get User Data Successfully',
@@ -85,7 +82,7 @@ export class AuthController {
   async update(
     @Req() request: Request,
     @Body() updateDto: AuthUpdateDto,
-  ): Promise<WebResponseDto<UpdateResponseDto>> {
+  ): Promise<WebResponseDto<AuthResponseDto>> {
     return {
       status: 'success',
       message: 'Update User Data Successfully',

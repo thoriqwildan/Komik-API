@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/user/domain/user';
 
-export class RegisterResponseDto {
+export class AuthResponseDto {
   @ApiProperty()
   token: string;
 
