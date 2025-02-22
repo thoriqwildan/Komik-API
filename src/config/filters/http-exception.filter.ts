@@ -27,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message,
       error: {
         code: status,
-        type: exceptionResponse['error'] || 'Internal Server Error',
+        type: exceptionResponse['error'],
         details: details,
       },
     });
