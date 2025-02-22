@@ -3,6 +3,10 @@ import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule as CM } from '@nestjs/config';
+import { SeriesModule } from './series/series.module';
+import { AuthorModule } from './author/author.module';
+import { GenreModule } from './genre/genre.module';
+import { ArtistModule } from './artist/artist.module';
 
 @Module({
   imports: [
@@ -10,6 +14,10 @@ import { ConfigModule as CM } from '@nestjs/config';
     AuthModule,
     UserModule,
     CM.forRoot({ isGlobal: true, envFilePath: ['.env'] }),
+    SeriesModule,
+    AuthorModule,
+    GenreModule,
+    ArtistModule,
   ],
   controllers: [],
   providers: [],

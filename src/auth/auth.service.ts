@@ -22,7 +22,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Username or Password is Wrong');
+      throw new BadRequestException('Username not Found');
     }
 
     const validPassword = await bcrypt.compare(

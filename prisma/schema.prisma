@@ -19,13 +19,73 @@ enum Roles {
   editor
 }
 
+enum SeriesTypes {
+  manhwa
+  manga
+  manhua
+}
+
 model User {
-  username      String      @id     @db.VarChar(50)
-  email         String      @unique
-  name          String?     @db.VarChar(100)
-  role          Roles       @default(user)
-  imgUrl        String?     @default("/profiles/index.png")
-  password      String
-  created_at    DateTime    @default(now())
-  updated_at    DateTime    @updatedAt
+  username   String   @id @db.VarChar(50)
+  email      String   @unique
+  name       String?  @db.VarChar(100)
+  role       Roles    @default(user)
+  imgUrl     String?  @default("/profiles/index.png")
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Series {
+  id          Int         @id @default(autoincrement())
+  title       String      @unique @db.VarChar(100)
+  alternative String?     @db.VarChar(100)
+  description String      @db.Text
+  imgUrl      String?     @default("/series/index.png")
+  type        SeriesTypes @default(manhwa)
+  status      String      @default("Ongoing")
+  release     String?
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  authors Author[]
+  artists Artist[]
+  genres  Genre[]
+
+  @@map("series")
+}
+
+model Author {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  series Series[]
+
+  @@map("authors")
+}
+
+model Artist {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  series Series[]
+
+  @@map("artists")
+}
+
+model Genre {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  series Series[]
+
+  @@map("genres")
 }
