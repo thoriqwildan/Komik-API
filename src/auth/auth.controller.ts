@@ -58,6 +58,22 @@ export class AuthController {
     };
   }
 
+  @Post('editor-register')
+  @ApiOkResponse({
+    type: AuthResponseDto,
+  })
+  async registerEditor(
+    @Body() registerDto: AuthRegisterDto,
+  ): Promise<WebResponseDto<AuthResponseDto>> {
+    const result = await this.authService.registerEditor(registerDto);
+
+    return {
+      status: 'success',
+      message: 'Register Successfully',
+      data: result,
+    };
+  }
+
   @ApiBearerAuth()
   @Get('me')
   @UseGuards(JwtRoleGuard)

@@ -96,6 +96,45 @@ export class AuthService {
     };
   }
 
+  async registerEditor(registerDto: AuthRegisterDto): Promise<AuthResponseDto> {
+    const sameUsername = await this.prismaService.user.count({
+      where: { username: registerDto.username },
+    });
+    if (sameUsername > 0) {
+      throw new BadRequestException('Username already exists');
+    }
+
+    const sameEmail = await this.prismaService.user.count({
+      where: { email: registerDto.email },
+    });
+    if (sameEmail > 0) {
+      throw new BadRequestException('Email already exists');
+    }
+
+    registerDto.password = await bcrypt.hash(registerDto.password, 10);
+
+    const data = await this.prismaService.user.create({
+      data: {
+        username: registerDto.username,
+        email: registerDto.email,
+        name: registerDto.name,
+        role: 'editor',
+        password: registerDto.password,
+      },
+    });
+
+    const token = await this.jwtService.signAsync({
+      sub: data.username,
+      email: data.email,
+      role: data.role,
+    });
+
+    return {
+      token: token,
+      user: this.userResponse(data),
+    };
+  }
+
   async me(username: string): Promise<User> {
     const user = await this.prismaService.user.findFirst({
       where: { username: username },

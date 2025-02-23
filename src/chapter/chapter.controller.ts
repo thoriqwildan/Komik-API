@@ -27,7 +27,7 @@ export class ChapterController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @Post('/chapter')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -88,7 +88,7 @@ export class ChapterController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @Delete('/chapter')
   async deleteChapter(
     @Param('series_id', ParseIntPipe) series_id: number,

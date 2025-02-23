@@ -38,7 +38,7 @@ export class SeriesController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Create Series',
@@ -142,7 +142,7 @@ export class SeriesController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @Get(':id/update')
   async getUpdateSeries(
     @Param('id', ParseIntPipe) series_id: number,
@@ -156,7 +156,7 @@ export class SeriesController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @Patch(':id/update')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -246,7 +246,7 @@ export class SeriesController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
+  @Roles('admin', 'editor')
   @Delete(':id')
   async delete(
     @Param('id', ParseIntPipe) series_id: number,

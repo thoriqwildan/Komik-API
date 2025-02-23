@@ -20,6 +20,17 @@ export class BookmarkService {
     if (!series) {
       throw new BadRequestException('Series not found');
     }
+
+    const bookmark = await this.prismaService.bookmark.findFirst({
+      where: { username: username, series_id: series_id },
+    });
+    if (bookmark) {
+      await this.prismaService.bookmark.deleteMany({
+        where: { username: username, series_id: series_id },
+      });
+      return false;
+    }
+
     await this.prismaService.bookmark.create({
       data: {
         username: username,

@@ -1,9 +1,8 @@
 import {
   Controller,
-  Delete,
   Param,
   ParseIntPipe,
-  Post,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,39 +19,22 @@ export class BookmarkController {
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
-  @Post(':id/bookmark')
+  @Roles('admin', 'user', 'editor')
+  @Patch(':id/bookmark')
   async createBookmark(
     @Req() req: Request,
     @Param('id', ParseIntPipe) series_id: number,
   ): Promise<WebResponseDto<any>> {
-    return {
-      status: 'success',
-      message: 'Bookmark Created',
-      data: await this.bookmarkService.createBookmark(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        req.user!['sub'],
-        series_id,
-      ),
-    };
-  }
+    const result = await this.bookmarkService.createBookmark(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      req.user!['sub'],
+      series_id,
+    );
 
-  @ApiBearerAuth()
-  @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
-  @Delete(':id/bookmark')
-  async deleteBookmark(
-    @Req() req: Request,
-    @Param('id', ParseIntPipe) series_id: number,
-  ): Promise<WebResponseDto<any>> {
     return {
       status: 'success',
-      message: 'Bookmark Deleted',
-      data: await this.bookmarkService.deleteBookmark(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        req.user!['sub'],
-        series_id,
-      ),
+      message: result ? 'Bookmark Created' : 'Bookmark Deleted',
+      data: result,
     };
   }
 }
