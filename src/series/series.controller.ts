@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -27,6 +28,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PaginationDto } from 'src/config/dto/pagination.dto';
 
 @Controller('series')
 export class SeriesController {
@@ -125,6 +127,11 @@ export class SeriesController {
       message: 'Get Series Data Successfully',
       data: await this.seriesService.getSeries(series_id),
     };
+  }
+
+  @Get()
+  async getAllSeries(@Query() paginationDto: PaginationDto) {
+    return this.seriesService.getAllSeries(paginationDto);
   }
 
   @ApiBearerAuth()

@@ -4,10 +4,15 @@ import { CreateSeriesDto } from './dto/series-create.dto';
 import { Series } from '@prisma/client';
 import { UpdateSeriesDto } from './dto/series-update.dto';
 import * as fs from 'fs';
+import { PaginationDto } from 'src/config/dto/pagination.dto';
+import { SeriesRepository } from './repositories/series.repository';
 
 @Injectable()
 export class SeriesService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private seriesRepository: SeriesRepository,
+  ) {}
 
   async create(createDto: CreateSeriesDto): Promise<Series> {
     const seriesCount = await this.prismaService.series.count({
@@ -67,6 +72,10 @@ export class SeriesService {
       throw new BadRequestException('Series not found');
     }
     return series;
+  }
+
+  async getAllSeries(paginationDto: PaginationDto) {
+    return this.seriesRepository.findManyWithPagination(paginationDto);
   }
 
   async getUpdateSeries(series_id: number): Promise<any> {
