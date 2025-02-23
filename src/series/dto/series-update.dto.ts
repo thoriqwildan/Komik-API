@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { IsNotEmpty } from 'class-validator';
 import { SeriesType } from '../enum/type.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class UpdateSeriesDto {
   @ApiProperty({ example: 'Solo Leveling', type: String })
@@ -39,15 +40,32 @@ export class UpdateSeriesDto {
   @ApiProperty({
     example: ['Chugong', 'h-goon', 'KI Soryeong'],
   })
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
   authors: string[];
 
   @ApiProperty({
     example: ['DUBU', 'Redice Studio'],
   })
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
   artists: string[];
 
   @ApiProperty({
     example: ['Action', 'Adventure', 'Drama', 'Fantasy', 'Mirror'],
   })
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
   genres: string[];
+
+  file?: string;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+  })
+  cover?: any;
 }
