@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/config/prisma.service';
 import { CreateChapterDto } from './dto/chapter-create.dto';
 import * as fs from 'fs';
-import * as unzipper from 'unzipper';
 import * as path from 'path';
 import * as sharp from 'sharp';
+import * as decompress from 'decompress';
 import { DeleteChapterDto } from './dto/chapter-delete.dto';
 
 @Injectable()
@@ -28,15 +26,11 @@ export class ChapterService {
 
     const zipPath = createDto.zipchapter?.path;
     console.log(zipPath);
+    console.log(uploadDir);
 
-    await fs
-      .createReadStream(zipPath!)
-      .pipe(unzipper.Extract({ path: uploadDir }))
-      .promise()
-      .catch((err) => {
-        console.log(err);
-        throw new BadRequestException('Failed to extract ZIP file');
-      });
+    await decompress(zipPath, uploadDir).catch((err) => {
+      console.log(err);
+    });
 
     fs.unlinkSync(zipPath!);
 
@@ -68,12 +62,18 @@ export class ChapterService {
     const data = await this.prismaService.chapter.create({
       data: {
         chapter: createDto.chapter,
+        title: createDto.title,
         dirUrl: dir_url,
         series: {
           connect: { id: createDto.series_id },
         },
       },
       include: { images: true },
+    });
+
+    await this.prismaService.series.update({
+      where: { id: createDto.series_id },
+      data: { updated_at: new Date() },
     });
 
     await this.prismaService.chapter_Image.createMany({
@@ -95,6 +95,29 @@ export class ChapterService {
     };
 
     return datachapter;
+  }
+
+  async getChapter(series_id: number, chapter_number: number) {
+    const series = await this.prismaService.series.findFirst({
+      where: { id: series_id },
+    });
+    if (!series) {
+      throw new BadRequestException('Series not found');
+    }
+    const chapter = await this.prismaService.chapter.findFirst({
+      where: { series_id: series_id, chapter: chapter_number.toString() },
+      include: { images: { select: { image_url: true } } },
+    });
+    if (!chapter) {
+      throw new BadRequestException('Chapter not found');
+    }
+
+    const ch_data = {
+      ...chapter,
+      images: chapter.images.map((img) => img.image_url),
+    };
+
+    return ch_data;
   }
 
   async deleteChapter(deleteChapterDto: DeleteChapterDto) {

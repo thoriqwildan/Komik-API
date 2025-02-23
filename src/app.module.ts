@@ -9,6 +9,7 @@ import { GenreModule } from './genre/genre.module';
 import { ArtistModule } from './artist/artist.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { HomeModule } from './home/home.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BookmarkModule } from './bookmark/bookmark.module';
     ArtistModule,
     ChapterModule,
     BookmarkModule,
+    HomeModule,
   ],
   controllers: [],
   providers: [],

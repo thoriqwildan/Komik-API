@@ -73,6 +73,7 @@ model Series {
 
 model Chapter {
   id         Int      @id @default(autoincrement())
+  title      String?  @db.VarChar(100)
   chapter    String   @db.VarChar(10)
   dirUrl     String   @db.VarChar(100)
   series     Series   @relation(fields: [series_id], references: [id], onDelete: Cascade)

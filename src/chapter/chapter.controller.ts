@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -21,14 +21,14 @@ import { diskStorage } from 'multer';
 import { WebResponseDto } from 'src/config/dto/web-response.dto';
 import { DeleteChapterDto } from './dto/chapter-delete.dto';
 
-@Controller('series/:series_id/chapter')
+@Controller('series/:series_id')
 export class ChapterController {
   constructor(private chapterService: ChapterService) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
   @Roles('admin', 'user')
-  @Post()
+  @Post('/chapter')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Upload Chapter',
@@ -74,10 +74,22 @@ export class ChapterController {
     };
   }
 
+  @Get('chapter-:id')
+  async getChapter(
+    @Param('series_id', ParseIntPipe) series_id: number,
+    @Param('id', ParseIntPipe) chapter_number: number,
+  ): Promise<WebResponseDto<any>> {
+    return {
+      status: 'success',
+      message: 'Chapter Found',
+      data: await this.chapterService.getChapter(series_id, chapter_number),
+    };
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtRoleGuard)
   @Roles('admin', 'user')
-  @Delete()
+  @Delete('/chapter')
   async deleteChapter(
     @Param('series_id', ParseIntPipe) series_id: number,
     @Body() deleteDto: DeleteChapterDto,

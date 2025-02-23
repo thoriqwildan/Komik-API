@@ -14,6 +14,7 @@ async function bootstrap() {
 
   app.use('/series_covers', express.static('uploads/series_covers'));
   app.use('/data', express.static('uploads/data'));
+  app.enableCors();
 
   const options = new DocumentBuilder()
     .setTitle('Komik API')
