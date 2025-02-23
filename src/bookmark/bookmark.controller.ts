@@ -14,7 +14,7 @@ import { Roles } from 'src/config/decorator/roles.decorator';
 import { Request } from 'express';
 import { WebResponseDto } from 'src/config/dto/web-response.dto';
 
-@Controller('bookmark')
+@Controller('series')
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
 
