@@ -30,8 +30,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { PaginationDto } from 'src/config/dto/pagination.dto';
 import * as sharp from 'sharp';
-import { CreateChapterDto } from './dto/chapter-create.dto';
-import { DeleteChapterDto } from './dto/chapter-delete.dto';
 
 @Controller('series')
 export class SeriesController {
@@ -257,72 +255,6 @@ export class SeriesController {
       status: 'success',
       message: 'Delete Series Data Successfully',
       data: await this.seriesService.delete(series_id),
-    };
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
-  @Post(':id/upload')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Upload Chapter',
-    type: CreateChapterDto,
-  })
-  @UseInterceptors(
-    FileInterceptor('zipchapter', {
-      storage: diskStorage({
-        destination: './uploads/tmp',
-        filename(req, file, callback) {
-          const filename = `${Date.now()}-${file.originalname}`;
-          callback(null, filename);
-        },
-      }),
-      fileFilter(req, file, callback) {
-        if (file.mimetype !== 'application/zip') {
-          return callback(
-            new BadRequestException('Only ZIP files are allowed'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-      limits: { fileSize: 100 * 1024 * 1024 },
-    }),
-  )
-  async uploadChapter(
-    @Param('id', ParseIntPipe) series_id: number,
-    @UploadedFile() chapterzip: Express.Multer.File,
-    @Body() createDto: CreateChapterDto,
-  ): Promise<WebResponseDto<any>> {
-    if (!chapterzip) {
-      throw new BadRequestException('Chapter ZIP file is required');
-    }
-
-    createDto.series_id = series_id; // ada
-    createDto.zipchapter = chapterzip;
-
-    return {
-      status: 'success',
-      message: 'Chapter Uploaded',
-      data: await this.seriesService.createChapter(createDto),
-    };
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtRoleGuard)
-  @Roles('admin', 'user')
-  @Delete(':id/chapter')
-  async deleteChapter(
-    @Param('id', ParseIntPipe) series_id: number,
-    @Body() deleteDto: DeleteChapterDto,
-  ): Promise<WebResponseDto<boolean>> {
-    console.log('DI CONTROLLER');
-    deleteDto.series_id = series_id;
-    return {
-      status: 'success',
-      message: 'Chapter Deleted',
-      data: await this.seriesService.deleteChapter(deleteDto),
     };
   }
 }

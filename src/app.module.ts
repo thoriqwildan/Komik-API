@@ -7,6 +7,8 @@ import { SeriesModule } from './series/series.module';
 import { AuthorModule } from './author/author.module';
 import { GenreModule } from './genre/genre.module';
 import { ArtistModule } from './artist/artist.module';
+import { ChapterModule } from './chapter/chapter.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ArtistModule } from './artist/artist.module';
     AuthorModule,
     GenreModule,
     ArtistModule,
+    ChapterModule,
+    BookmarkModule,
   ],
   controllers: [],
   providers: [],

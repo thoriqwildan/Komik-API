@@ -35,7 +35,19 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  bookmarks Bookmark[]
+
   @@map("users")
+}
+
+model Bookmark {
+  user       User     @relation(fields: [username], references: [username])
+  username   String
+  series     Series   @relation(fields: [series_id], references: [id], onDelete: Cascade)
+  series_id  Int
+  created_at DateTime @default(now())
+
+  @@id([username, series_id])
 }
 
 model Series {
@@ -50,10 +62,11 @@ model Series {
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
 
-  authors  Author[]
-  artists  Artist[]
-  genres   Genre[]
-  chapters Chapter[]
+  authors   Author[]
+  artists   Artist[]
+  genres    Genre[]
+  chapters  Chapter[]
+  bookmarks Bookmark[]
 
   @@map("series")
 }
@@ -62,7 +75,7 @@ model Chapter {
   id         Int      @id @default(autoincrement())
   chapter    String   @db.VarChar(10)
   dirUrl     String   @db.VarChar(100)
-  series     Series   @relation(fields: [series_id], references: [id])
+  series     Series   @relation(fields: [series_id], references: [id], onDelete: Cascade)
   series_id  Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
