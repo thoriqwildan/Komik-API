@@ -13,6 +13,7 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true }));
 
   app.use('/series_covers', express.static('uploads/series_covers'));
+  app.use('/data', express.static('uploads/data'));
 
   const options = new DocumentBuilder()
     .setTitle('Komik API')
