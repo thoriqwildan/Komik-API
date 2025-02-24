@@ -108,6 +108,25 @@ export class ChapterService {
       where: { series_id: series_id, chapter: chapter_number.toString() },
       include: { images: { select: { image_url: true } } },
     });
+
+    const previous = await this.prismaService.chapter
+      .findFirst({
+        where: {
+          series_id: series_id,
+          chapter: (chapter_number - 1).toString(),
+        },
+      })
+      .then((chap) => !!chap);
+
+    const next = await this.prismaService.chapter
+      .findFirst({
+        where: {
+          series_id: series_id,
+          chapter: (chapter_number + 1).toString(),
+        },
+      })
+      .then((chap) => !!chap);
+
     if (!chapter) {
       throw new BadRequestException('Chapter not found');
     }
@@ -117,7 +136,7 @@ export class ChapterService {
       images: chapter.images.map((img) => img.image_url),
     };
 
-    return ch_data;
+    return { data: ch_data, previous, next };
   }
 
   async deleteChapter(deleteChapterDto: DeleteChapterDto) {

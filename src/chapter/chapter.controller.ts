@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { WebResponseDto } from 'src/config/dto/web-response.dto';
 import { DeleteChapterDto } from './dto/chapter-delete.dto';
+import { ChapterReadDto } from './dto/chapter-read.dto';
 
 @Controller('series/:series_id')
 export class ChapterController {
@@ -78,11 +79,17 @@ export class ChapterController {
   async getChapter(
     @Param('series_id', ParseIntPipe) series_id: number,
     @Param('id', ParseIntPipe) chapter_number: number,
-  ): Promise<WebResponseDto<any>> {
+  ): Promise<ChapterReadDto<any>> {
+    const { data, previous, next } = await this.chapterService.getChapter(
+      series_id,
+      chapter_number,
+    );
     return {
       status: 'success',
       message: 'Chapter Found',
-      data: await this.chapterService.getChapter(series_id, chapter_number),
+      data: data,
+      previous: previous,
+      next: next,
     };
   }
 
