@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=nestjspassword
+      - MYSQL_DATABASE=komikdb
+    ports:
+      - '3308:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  komik:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: komik-api
+    env_file:
+      - .env
+    ports:
+      - '3001:3000'
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - /home/wildan/Development/gtw/01:/app/src
+networks:
+  bridge:
+    driver: bridge
